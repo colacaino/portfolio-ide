@@ -1,0 +1,500 @@
+/* App.css - VS Code Style con Resizer */
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; /* Importante para que no seleccione texto al arrastrar */ }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #1e1e1e;
+  color: #cccccc;
+  overflow: hidden;
+}
+
+.ide-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Activity Bar */
+.activity-bar {
+  width: 50px;
+  min-width: 50px; /* Fijo */
+  background-color: #333333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+  z-index: 10;
+}
+
+.icon-container {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: #858585;
+  font-size: 24px;
+  border-left: 2px solid transparent;
+}
+.icon-container:hover { color: white; }
+.icon-container.active { color: white; border-left-color: white; }
+.icon-container.admin-active { color: #4fc3f7; }
+
+/* Sidebar (Ahora sin width fijo en CSS, lo pondremos en línea) */
+.sidebar {
+  background-color: #252526;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Si se achica mucho, que no se rompa */
+}
+
+.sidebar-title {
+  padding: 10px 20px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #bbbbbb;
+  white-space: nowrap; /* Que el texto no baje de línea */
+}
+
+.file-tree { padding-top: 5px; }
+
+.file-item {
+  padding: 4px 15px;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #cccccc;
+  white-space: nowrap;
+}
+.file-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+.file-delete {
+  background: transparent;
+  border: none;
+  color: #8f8f8f;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.file-item:hover .file-delete { opacity: 1; }
+.file-item:hover { background-color: #2a2d2e; }
+.file-item.active { background-color: #37373d; color: white; }
+.folder-item { color: #c6c6c6; }
+.folder-item.drag-over { background-color: #003d66; }
+.creating-item { background-color: #2a2a2a; }
+.file-item.selected { outline: 1px solid #3a3a3a; background-color: #2d2d2d; }
+
+.file-actions {
+  display: flex;
+  align-items: center;
+}
+
+.new-item-input {
+  background: #1e1e1e;
+  border: 1px solid #3a3a3a;
+  color: #e6e6e6;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  width: 160px;
+}
+
+.breadcrumb-bar {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  color: #bdbdbd;
+  font-size: 12px;
+  background-color: #252526;
+  border-bottom: 1px solid #1e1e1e;
+}
+
+.breadcrumb-sep {
+  margin: 0 6px;
+  color: #6f6f6f;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  height: 100%;
+  background-color: #2a2a2a;
+  color: #dcdcdc;
+  cursor: pointer;
+  border-right: 1px solid #1e1e1e;
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.tab.active {
+  background-color: #1e1e1e;
+  color: white;
+  border-top: 1px solid #007acc;
+}
+
+.tab-indicator {
+  margin-left: 6px;
+  font-size: 12px;
+}
+
+.tab-close {
+  background: transparent;
+  border: none;
+  color: #a0a0a0;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.tab-close:hover { color: white; }
+
+.viewer-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #121212;
+}
+
+.viewer-image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.viewer-media {
+  width: 100%;
+  height: 100%;
+}
+
+.viewer-audio {
+  width: 90%;
+}
+
+.viewer-fallback {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #cfcfcf;
+  font-size: 14px;
+  align-items: center;
+}
+
+.viewer-link {
+  color: #4fc3f7;
+}
+
+/* --- EL NUEVO ELEMENTO MAGICO: RESIZER --- */
+.resizer {
+  width: 5px; /* Zona de agarre */
+  background-color: transparent;
+  cursor: col-resize; /* El cursor cambia a flechitas <-> */
+  transition: background-color 0.2s;
+  z-index: 20;
+}
+.resizer:hover, .resizer:active {
+  background-color: #007acc; /* Se pone azul cuando lo agarras, como VS Code */
+}
+
+/* Editor */
+.editor-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+  min-width: 0; /* Evita desbordamientos flex */
+}
+
+.tabs-bar {
+  height: 35px;
+  background-color: #2d2d2d;
+  display: flex;
+  align-items: center;
+}
+
+.monaco-container { flex: 1; overflow: hidden; }
+
+/* Status Bar (Barra inferior nueva para más realismo) */
+.status-bar {
+  height: 22px;
+  background-color: #007acc;
+  color: white;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  justify-content: space-between;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  z-index: 30;
+}
+
+/* Login Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-card {
+  width: 360px;
+  background: #1f1f1f;
+  border: 1px solid #2c2c2c;
+  border-radius: 8px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  color: #e6e6e6;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #2c2c2c;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: #cfcfcf;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.modal-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: #bdbdbd;
+}
+
+.modal-input {
+  background: #121212;
+  border: 1px solid #2f2f2f;
+  color: #e6e6e6;
+  padding: 8px 10px;
+  border-radius: 6px;
+}
+
+.modal-error {
+  color: #ff6b6b;
+  font-size: 12px;
+}
+
+.modal-submit {
+  background: #007acc;
+  color: white;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.modal-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.modal-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px 0;
+}
+
+.modal-tab {
+  background: #2a2a2a;
+  border: 1px solid #343434;
+  color: #cfcfcf;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.modal-tab.active {
+  background: #007acc;
+  border-color: #007acc;
+  color: white;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-wide {
+  width: 420px;
+}
+
+.modal-profile {
+  width: min(860px, 92vw);
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 16px;
+}
+
+.profile-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #2f2f2f;
+}
+
+.profile-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.modal-textarea {
+  background: #121212;
+  border: 1px solid #2f2f2f;
+  color: #e6e6e6;
+  padding: 8px 10px;
+  border-radius: 6px;
+  min-height: 80px;
+  resize: vertical;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+}
+
+.modal-cancel {
+  background: transparent;
+  border: 1px solid #3a3a3a;
+  color: #e6e6e6;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-ghost {
+  background: transparent;
+  border: none;
+  color: #ffb4b4;
+  cursor: pointer;
+}
+
+.modal-info {
+  color: #9d9d9d;
+  font-size: 12px;
+}
+
+.pdf-container {
+  height: 75vh;
+}
+
+.pdf-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.modal-pdf {
+  width: min(900px, 90vw);
+}
+
+.pdf-placeholder {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9a9a9a;
+  font-size: 14px;
+}
+
+/* Sidebar new file */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sidebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.new-file-button {
+  background: transparent;
+  border: none;
+  color: #8f8f8f;
+  cursor: pointer;
+  padding: 2px;
+  font-size: 14px;
+}
+
+.new-file-button:hover { color: #ffffff; }
+.new-file-button:disabled { opacity: 0.4; cursor: not-allowed; }
+@media (max-width: 1100px) {
+  .modal-profile { width: min(720px, 94vw); }
+  .profile-grid { grid-template-columns: 1fr; }
+  .profile-left { flex-direction: row; justify-content: flex-start; }
+  .profile-avatar { width: 110px; height: 110px; }
+}
+
+@media (max-width: 720px) {
+  .activity-bar { width: 44px; min-width: 44px; }
+  .icon-container { width: 44px; height: 44px; font-size: 20px; }
+  .sidebar { width: 220px; }
+  .sidebar-title { padding: 8px 14px; }
+  .tabs-bar { height: 32px; }
+  .tab { max-width: 160px; font-size: 12px; }
+  .breadcrumb-bar { font-size: 11px; padding: 0 8px; }
+}
+
+@media (max-width: 560px) {
+  .ide-container { flex-direction: column; }
+  .activity-bar { flex-direction: row; width: 100%; height: 44px; padding-top: 0; }
+  .sidebar { width: 100%; height: 220px; }
+  .editor-wrapper { height: calc(100vh - 44px - 220px); }
+  .status-bar { position: static; }
+}
